@@ -49,25 +49,33 @@ workflows:
           </dict>
           </plist>
           EOF
+          plutil -lint build/ExportOptions.plist
           bash buildscripts/updateSecrets.sh
-      - name: Archive and export iOS app
+      - name: Archive iOS app
         script: |
           set -euo pipefail
-          mkdir -p build
-          if ! xcode-project build-ipa \
-            --project NetNewsWire.xcodeproj \
-            --scheme NetNewsWire-iOS \
-            --config Release \
-            --export-options-plist build/ExportOptions.plist \
-            --archive-xcargs "COMPILER_INDEX_STORE_ENABLE=NO CURRENT_PROJECT_VERSION=${PROJECT_BUILD_NUMBER}" \
-            --disable-xcpretty 2>&1 | tee build/archive.log; then
+          if ! xcodebuild archive \
+            -project NetNewsWire.xcodeproj \
+            -scheme NetNewsWire-iOS \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/ios/NetNewsWire.xcarchive \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            "CURRENT_PROJECT_VERSION=${PROJECT_BUILD_NUMBER}" 2>&1 | tee build/archive.log; then
             grep -n -B 2 -A 4 'error:' build/archive.log || true
             exit 1
           fi
+      - name: Export internal TestFlight IPA
+        script: |
+          set -euo pipefail
+          xcodebuild -exportArchive \
+            -archivePath build/ios/NetNewsWire.xcarchive \
+            -exportOptionsPlist build/ExportOptions.plist \
+            -exportPath build/ios/ipa 2>&1 | tee build/export.log
     artifacts:
       - build/ios/ipa/*.ipa
       - build/archive.log
-      - /tmp/xcodebuild_logs/*.log
+      - build/export.log
     publishing:
       app_store_connect:
         auth: integration
