@@ -4,7 +4,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 45
     integrations:
-      app_store_connect: PenCue
+      app_store_connect: Reader
     environment:
       xcode: "27.2"
       vars:
@@ -26,9 +26,9 @@ workflows:
           EOF
           # The project uses synchronized xcconfig references. Set the profiles in the
           # target xcconfigs so Xcode can resolve them without rewriting the project.
-          printf '\nPROVISIONING_PROFILE_SPECIFIER = Bytefish Reader App Store\n' >> xcconfig/NetNewsWire_iOSapp_target.xcconfig
-          printf '\nPROVISIONING_PROFILE_SPECIFIER = Bytefish Reader Share App Store\n' >> xcconfig/NetNewsWire_iOSshareextension_target.xcconfig
-          printf '\nPROVISIONING_PROFILE_SPECIFIER = Bytefish Reader Widgets App Store\n' >> xcconfig/NetNewsWire_iOSwidgetextension_target.xcconfig
+          printf '\nPROVISIONING_PROFILE_SPECIFIER = Reader iOS\n' >> xcconfig/NetNewsWire_iOSapp_target.xcconfig
+          printf '\nPROVISIONING_PROFILE_SPECIFIER = Reader Shared\n' >> xcconfig/NetNewsWire_iOSshareextension_target.xcconfig
+          printf '\nPROVISIONING_PROFILE_SPECIFIER = Reader Widgets\n' >> xcconfig/NetNewsWire_iOSwidgetextension_target.xcconfig
           cat > build/ExportOptions.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -42,9 +42,9 @@ workflows:
             <key>testFlightInternalTestingOnly</key><true/>
             <key>provisioningProfiles</key>
             <dict>
-              <key>sh.bytefi.NetNewsWire.iOS</key><string>Bytefish Reader App Store</string>
-              <key>sh.bytefi.NetNewsWire.iOS.Share-Extension</key><string>Bytefish Reader Share App Store</string>
-              <key>sh.bytefi.NetNewsWire.iOS.SpringboardWidgets</key><string>Bytefish Reader Widgets App Store</string>
+              <key>sh.bytefi.NetNewsWire.iOS</key><string>Reader iOS</string>
+              <key>sh.bytefi.NetNewsWire.iOS.Share-Extension</key><string>Reader Shared</string>
+              <key>sh.bytefi.NetNewsWire.iOS.SpringboardWidgets</key><string>Reader Widgets</string>
             </dict>
           </dict>
           </plist>
